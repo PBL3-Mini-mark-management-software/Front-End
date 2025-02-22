@@ -1,0 +1,150 @@
+<!-- nếu không ghi scoped thì css ăn luôn các file khác -->
+<!-- <script setup>
+
+import {ref} from 'vue';
+const dataList = ref([])
+const a=10
+async function getData() {
+  const response = await fetch('');
+  const result= await response.json();
+  dataList.value = result.results;
+  console.log(data, result);
+  console.logo(dataList.value);
+}
+
+
+</script>
+
+<template>
+  <div class="text">
+    <button @click="getData">hehe</button>
+  
+  </div>
+</template>
+<style scoped>
+.text{
+  color:red;
+}
+</style>
+
+ -->
+<!-- v-html: là thuộc tính của vue -->
+ <!-- v-bind: ktra đúng sai để gán giá trị -->
+  <!-- thuôcj tính là dùng : -->
+     <!-- v-on:click truyền sự kiện -->
+ <!-- <script setup>
+  const name = "friends"
+  const htmlString = "<b>hello</b>"
+  const isRed = false;
+  //true => isRed, false => isBlue
+  const className = isRed ? "isRed" : "isBlue"
+
+  function handleClick(){
+    alert("clicked");
+  }
+</script>
+<template>
+  <div>
+    <p>hello {{ name }}</p>
+    <p v-html=" htmlString "></p>
+
+    <p v-bind:class="className">hehheheheh</p>
+    <button v-on:click="handleClick">
+      Click me
+    </button>
+  </div>
+</template>
+<style scoped>
+.isRed{
+  color: red;
+}
+.isBlue{
+  color: blue;
+}
+</style> -->
+
+<!-- 
+<script setup>
+  let isRed = 'hehe';
+</script>
+<template>
+  <div>
+    <p v-if="isRed === 'hehe'">
+    hello red
+    </p>
+    <p v-else-if="isRed === 'blue'">
+    hello true
+    </p>
+    <p v-else>
+    nothing
+    </p>
+    <p v-show="isRed === 'hehe'">
+    show me
+    </p>
+  </div>
+</template>
+<style scoped>
+</style> -->
+
+
+<!-- reactive thuong su dung voi object phuc tap -->
+<!-- <script setup>
+import { reactive, ref } from 'vue';
+// let count = 0;
+const count = ref(0);
+// count check = isRed === 'hehe' ? 'red' : 'blue'
+console.log("count", count.value);
+const obj = reactive({
+  name: 'John',
+  age: 23
+})
+function handleClick(){
+  count.value++;
+  obj.age = 3;
+  console.log(obj.age);
+  console.log('clicked', count.value);
+}
+</script>
+<template>
+  <div style = "font-size: x-large; color: red;">
+    {{ count }}
+  </div>
+  <button @click="handleClick">
+    Click me
+
+  </button>
+</template>
+<style scoped>
+</style> -->
+
+<!-- computed tính toán lại giá trị khi thay đổi -->
+ <!-- computed  -->
+<!-- <script setup>
+
+  import { reactive, ref, computed } from 'vue';
+  // let count = 0;
+  const count = ref(0);
+    const author = reactive({
+    name: 'John',
+    books:[
+      'Vue 2 - Advanced Guide',
+      'Vue 3 - Basic Guide',
+      'Vue 4 - The Mystery'
+    ]
+  })
+  function handleClick(){
+    count.value++;
+    console.log("clicked: ", count.value)
+    author.books.push('$Vue $(author.books.length + 2) - The Myth')
+  }
+  const mess = computed(() =>{
+    return author.books.length > 5 ? "5 books" : "less 5 books"
+  })
+</script>
+<template>
+  <p>
+    {{ mess }}
+  </p>
+</template>
+<style scoped>
+</style> -->
