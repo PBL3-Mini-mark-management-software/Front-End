@@ -1,0 +1,100 @@
+ <!-- <script setup>
+import Header from './Head.vue';
+import Main from './Main1.vue';
+</script>
+<template>
+    <Header />
+    <Main />
+</template>
+<style scoped>
+body{
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+}
+
+</style>  -->
+<!-- 
+
+<script setup>
+    import {ref} from 'vue'
+    const idName = 'heheh'
+    const a = ref(1)
+    const abe = ref(0)
+    const abc = computed( () => {
+        return abe.value + 5;
+    })
+    console.log(abc.value);
+
+</script>
+<template>
+    <CustomHeader />
+    <CustomHeader></CustomHeader>
+    <div :id="idName" @click="handleClick">
+
+    </div>
+</template>
+<style scoped>
+</style> -->
+
+<!-- 
+<script setup>
+    import {ref} from 'vue'
+    const arr = ref([
+        'nhan',
+        'hehe',
+        'hihei',
+        'hhaha'
+    ])
+</script>
+<template>
+   <div class="card-container" v-for="(item,index) in arr" :key="item">
+      <p>{{index}} - {{ item }}</p>
+    </div>
+</template>
+<style scoped>
+
+</style> -->
+
+
+
+
+<script setup>
+import { RouterView } from 'vue-router';
+</script>
+<template>
+    <main>
+    <RouterView />
+    </main>
+</template>
+<style scoped>
+    
+</style> 
+    
+    <!-- <script>
+    // import { onMounted, ref} from 'vue';
+    import { RouterLink, RouterView} from 'vue-router';
+    import { useRoute, useRouter } from 'vue-router';
+    const router = useRouter();
+    function gotoDetail(){
+        router.push(`/detail/$id`);
+    }
+    </script>
+    <template>
+        <h1>Hello App</h1>
+        <p>
+           <strong>Current route path:</strong> {{ $router.f }}
+        </p>
+        <button>Click me</button>
+        <div style = "display:flex; flex-direction: column;">
+            <RouterLink to="/home">Go to Home</RouterLink>
+            <RouterLink to="/detail:/">Go to Detail</RouterLink>
+        </div>
+        <main>
+            <p>content: </p>
+        <RouterView />
+    </main>
+    </template> -->
