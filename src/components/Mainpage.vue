@@ -74,10 +74,10 @@ const clickMenu = (menu) => {
 
             <div class="report" @click.prevent="clickMenu('report')">
                 <a href="#"><i class="fa fa-chart-line"></i> Báo cáo doanh thu</a>
-                <div class="hidden-report" v-show="isOpened === 'report'">
+                <!-- <div class="hidden-report" v-show="isOpened === 'report'">
                     <a href="">Tổng quan báo cáo</a>
                     <a href="">Danh sách báo cáo</a>
-                </div>
+                </div> -->
             </div>
 
             <a href="#"><i class="fa fa-book"></i> Sổ quỹ</a>
@@ -126,7 +126,9 @@ body{
     left: 0;
     width: 18%;
     height: 100%;
-    background-color: #ffad27;
+    /* background-color: #0884f1; */
+    background-color: #388be3;
+    font-family: 'Noto Sans', sans-serif;
 }
 .logo{
     width: 100%;
@@ -147,6 +149,8 @@ body{
     list-style: none;
     padding: 0;
     margin: 0 10px;
+    font-family: 'Noto Sans', sans-serif;
+    overflow-y:inherit;
 }
 /* .menu li {
     display: flex;  
@@ -192,7 +196,8 @@ body{
 .warehouse_management.active > a,
 .customer.active > a,
 .report.active > a {
-    color: #ffad27;
+    /* color: #0884f1; */
+   color: #388be3;
     border-radius: 10px;
     background-color: #d9e6e6;
 }

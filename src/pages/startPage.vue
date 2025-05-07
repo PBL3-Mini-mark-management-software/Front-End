@@ -81,7 +81,7 @@ body{
 }
 .header{
     position:sticky;
-    background-color: #ffad27;
+    background-color: #388be3;
     height: 10vh;
     box-shadow:  0 3px 3px #a7a6a6;
     padding: 0 50px;
@@ -104,10 +104,10 @@ body{
     gap: 30px;
 }
 .contact{
-    background-color: rgb(183, 0, 0);
+    background-color: rgb(214, 8, 8);
     color:#f5f5f5;
     font-size: 15px;
-    border: 10px solid rgb(183, 0, 0);
+    border: 10px solid rgb(214, 8, 8);
     border-radius: 10px;
     padding: 0 10px;
     text-decoration: none;
@@ -125,7 +125,7 @@ body{
     gap: 5px;
 }
 .line{
-    background-color: #ffad27;
+    background-color: #388be3;
     width: 60%;
     height: 2px;
     border-radius: 10%;
@@ -227,10 +227,10 @@ body{
     align-items: center;
 }
 .login, .register{
-    background-color: #ffad27;
+    background-color: #388be3;
     color:#f5f5f5;
     font-size: 25px;
-    border: 10px solid #ffad27;
+    border: 10px solid #388be3;
     border-radius: 8px;
     white-space: nowrap;
     padding: 0 15px;
@@ -244,7 +244,7 @@ body{
     display:flex;
     justify-content: flex-start;
     flex-direction: column;
-    background-color: #f9b547;
+    background-color: #388be3;
     color: #f5f5f5;
     width: 100vw;
 }

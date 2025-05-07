@@ -69,7 +69,7 @@ body{
     width: 120vw;
     height: 80vh;
     border-radius: 45%;
-    background-color: #FFAD27;
+    background-color: #388be3;
 }
 .main-content{
     z-index:10;
@@ -134,7 +134,7 @@ body{
     cursor: pointer;
     font-size: 20px;
     border-color: transparent;
-    background-color: #FFAD27;
+    background-color: #388be3;
     color:#FFFFFF;
     border-radius: 30px;
     padding:15px 30px;
@@ -145,7 +145,7 @@ body{
     padding: 0;
 }
 .SignUp{
-    color:#FFAD27;
+    color:#388be3;
     font-weight: 600;
     font-size: 21px;
     text-decoration: none !important;

@@ -100,7 +100,7 @@ body {
     justify-content: space-between;
     width: 100%;
     height: 200px;
-    background-color: #ffad27;
+    background-color: #388be3;
     border-bottom-left-radius: 50% 100px;
     border-bottom-right-radius: 50% 100px;
     padding: 50px 30px;
@@ -135,7 +135,7 @@ body {
     width: 30%;
     height: 50px;
     background-color: #fff;
-    color: #ffad27;
+    color: #388be3;
     font-size: 18px;
     font-weight: 600;
     border-radius: 35px;
@@ -156,7 +156,7 @@ body {
     justify-content: center;
     align-items: center;
     background-color: #fff;
-    padding: 15px;
+    padding: 25px;
     border-radius: 20px;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
 }
@@ -194,7 +194,7 @@ body {
     color: #382a40;
 }
 .Button-Res{
-    background-color: #ffad27;
+    background-color: #388be3;
     color: #fff;
     display: flex;
     justify-content: center;
@@ -215,7 +215,7 @@ body {
     font-size: 12px;
 }
 .text-res{
-    color: #ffad27;
+    color: #388be3;
     font-size: 13px;
     margin-left: 10px;
     cursor: pointer;
