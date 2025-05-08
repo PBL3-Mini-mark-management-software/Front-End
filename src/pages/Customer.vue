@@ -1,20 +1,122 @@
 <script setup>
 import Mainpage from '../components/Mainpage.vue'
 import Taskbar from '../components/Taskbar.vue';
-import { customers as customerData } from '../data/customers.js'
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted} from 'vue';
+import axios from 'axios';
 
-const customers = ref(customerData);
+const customers = ref([]);
 const searchKeyword = ref('');
 const filterPoints = ref('');
-const filterRank = ref('');
-const filterGroup = ref('');
+const filtermembership_type = ref('');
+const filtercustomer_group = ref('');
+const showConfirmModal = ref(null); 
 const dropdowns = ref({
   points: false,
-  rank: false,
-  group: false
+  membership_type: false,
+  customer_group: false
 });
 
+const showAddCustomerForm = ref(false);  
+const showEditCustomerForm = ref(false);
+const newCustomer = ref({
+  customer_id: '',
+  name: '',
+  phone: '',
+  date_of_birth: '',
+  points: '',
+  membership_type: '',
+  customer_group: ''
+});
+const isEditMode = ref(false);
+const editCustomer = ref({}); 
+
+const fetchCustomers = async () => {
+  try {
+    const response = await axios.get('http://localhost:8082/api/customers');
+    customers.value = response.data;
+  } catch (error) {
+    console.error('Lỗi khi tải dữ liệu khách hàng:', error);
+  }
+};
+
+const addCustomer = async () => {
+  try {
+    const response = await axios.post('http://localhost:8082/api/customers', newCustomer.value);
+    customers.value.push(response.data); 
+    alert('Thêm khách hàng thành công!');
+    showAddCustomerForm.value = false;  
+    resetNewCustomer();  // Xóa form
+  } catch (error) {
+    console.error('Lỗi khi thêm khách hàng:', error);
+    alert('Lỗi khi thêm khách hàng'); 
+  }
+};
+
+const resetNewCustomer = () => {
+  newCustomer.value = {
+    customer_id: '',
+    name: '',
+    phone: '',
+    date_of_birth: '',
+    points: '',
+    membership_type: '',
+    customer_group: ''
+  };
+};
+
+const openEditForm = (customer) => {
+  editCustomer.value = { ...customer }; 
+  isEditMode.value = true;
+  showEditCustomerForm.value = true;
+};
+
+const editCustomerById = async () => {
+  try{
+    const response = await axios.patch(`http://localhost:8082/api/customers/${editCustomer.value.customer_id}`, editCustomer.value);
+    const index = customers.value.findIndex(customer => customer.customer_id === editCustomer.value.customer_id);
+    if (index !=-1){
+      customers.value[index] = response.data;
+    }
+    alert("Cập nhật thành công");
+    showEditCustomerForm.value = false;
+  }catch (error){
+    console.error('Lỗi khi cập nhật khách hàng:', error);
+    alert('Lỗi khi cập nhật khách hàng');
+  }
+};
+
+const deleteCustomer = async (customerId) => {
+  showConfirmModal.value = customerId;
+};
+
+// Handle delete confirmation
+const confirmDelete = async (customerId) => {
+  if (showConfirmModal.value !== null) {
+    const customerId = showConfirmModal.value;
+    try {
+      await deleteCustomerById(customerId);
+      showConfirmModal.value = null;  // Close modal after delete
+    } catch (error) {
+      console.error('Lỗi khi xóa khách hàng:', error);
+      alert('Lỗi khi xóa khách hàng');
+    }
+  }
+};
+
+const deleteCustomerById = async (customerId) => {
+  try {
+    await axios.delete(`http://localhost:8082/api/customers/${customerId}`);
+    customers.value = customers.value.filter(customer => customer.customer_id !== customerId);
+    alert('Xóa khách hàng thành công!');
+  } catch (error) {
+    console.error('Lỗi khi xóa khách hàng:', error);
+    alert('Lỗi khi xóa khách hàng');
+  }
+};
+// Cancel delete action and close the modal
+const cancelDelete = () => {
+  showConfirmModal.value = null;  // Close modal without deleting
+};
 
 function Dropdown(type) {
   dropdowns.value[type] = !dropdowns.value[type];
@@ -28,20 +130,20 @@ function filterByPoints(range) {
   dropdowns.value.points = false;
 }
 
-function filterByRank(rank) {
-  filterRank.value = rank;
-  dropdowns.value.rank = false;
+function filterBymembership_type(membership_type) {
+  filtermembership_type.value = membership_type;
+  dropdowns.value.membership_type = false;
 }
 
-function filterByGroup(group) {
-  filterGroup.value = group;
-  dropdowns.value.group = false;
+function filterBycustomer_group(customer_group) {
+  filtercustomer_group.value = customer_group;
+  dropdowns.value.customer_group = false;
 }
 
 function getPointRange(range, points) {
   switch (range) {
-    case '0-100': return points >= 0 && points <= 100;
-    case '101-500': return points > 100 && points <= 500;
+    case '0-200': return points >= 0 && points <= 200;
+    case '201-500': return points > 200 && points <= 500;
     case 'Trên 500': return points > 500;
     default: return true;
   }
@@ -51,19 +153,22 @@ const filteredCustomers = computed(() => {
   return customers.value.filter(c => {
     const matchName = c.name.toLowerCase().includes(searchKeyword.value.toLowerCase());
     const matchPoints = filterPoints.value ? getPointRange(filterPoints.value, c.points) : true;
-    const matchRank = filterRank.value ? c.rank === filterRank.value : true;
-    const matchGroup = filterGroup.value ? c.group === filterGroup.value : true;
+    const matchmembership_type = filtermembership_type.value ? c.membership_type === filtermembership_type.value : true;
+    const matchcustomer_group = filtercustomer_group.value ? c.customer_group === filtercustomer_group.value : true;
 
-    return matchName && matchPoints && matchRank && matchGroup;
+    return matchName && matchPoints && matchmembership_type && matchcustomer_group;
   });
 });
 
 function resetFilters() {
   filterPoints.value = '';
-  filterRank.value = '';
-  filterGroup.value = '';
+  filtermembership_type.value = '';
+  filtercustomer_group.value = '';
   searchKeyword.value = '';
 }
+onMounted(() => {
+  fetchCustomers();
+});
 
 </script>
 
@@ -76,11 +181,63 @@ function resetFilters() {
             <div class="container">
                 <div class="header2">
                     <h3>Khách hàng</h3>
-                    <button class="add-button">
+                    <button class="add-button" @click="showAddCustomerForm = true">
                         <font-awesome-icon :icon="['fas', 'circle-plus']" />
                         Thêm khách hàng
                     </button>
                 </div>
+
+                <!-- form add -->
+                <div v-if="showAddCustomerForm" class="add-customer-form">
+                  <h4>Thêm khách hàng mới</h4>
+                  <form @submit.prevent="addCustomer">
+                    <div>
+                      <label for="customer_id">Id:</label>
+                      <input v-model="newCustomer.customer_id" type="text" id="customer_id" required />
+                    </div>
+                    <div>
+                      <label for="name">Tên khách hàng:</label>
+                      <input v-model="newCustomer.name" type="text" id="name" required />
+                    </div>
+                    <div>
+                      <label for="phone">Số điện thoại:</label>
+                      <input v-model="newCustomer.phone" type="text" id="phone" required />
+                    </div>
+                    <div>
+                      <label for="date_of_birth">Ngày sinh:</label>
+                      <input v-model="newCustomer.date_of_birth" type="date" id="date_of_birth" required />
+                    </div>
+                    <div>
+                      <label for="points">Điểm tích lũy:</label>
+                      <input v-model="newCustomer.points" type="number" id="points" required />
+                    </div>
+                    <div>
+                      <label for="membership_type">Loại thành viên:</label>
+                      <select v-model="newCustomer.membership_type" required>
+                        <option value="Kim cương">Kim cương</option>
+                        <option value="Vàng">Vàng</option>
+                        <option value="Bạc">Bạc</option>
+                        <option value="Đồng">Đồng</option>
+                      </select>
+                      <!-- <input v-model="newCustomer.membership_type" type="text" id="membership_type" required /> -->
+                    </div>
+                    <div>
+                      <label for="customer_group">Nhóm khách hàng:</label>
+                      <select v-model="newCustomer.customer_group" required>
+                        <option value="Trẻ em">Trẻ em</option>
+                        <option value="Trẻ vị thành niên">Trẻ vị thành niên</option>
+                        <option value="Học sinh">Học sinh</option>
+                        <option value="Sinh viên">Sinh viên</option>
+                        <option value="Người lớn">Người lớn</option>
+                        <option value="Khác">Khác</option>
+                      </select>
+                      <!-- <input v-model="newCustomer.customer_group" type="text" id="customer_group" required /> -->
+                    </div>
+                    <button type="submit">Lưu</button>
+                    <button type="button" @click="showAddCustomerForm = false">Hủy</button>
+                  </form>
+                </div>
+
                 <div class="white-container">
                     <div class="header2">
                         <div class="search-name">
@@ -94,32 +251,38 @@ function resetFilters() {
                                     <font-awesome-icon :icon="['fas', 'sort-down']" />
                                 </button>
                                 <div v-if="dropdowns.points" class="dropdown-menu">
-                                <div @click="filterByPoints('0-100')">0 - 100</div>
-                                <div @click="filterByPoints('101-500')">101 - 500</div>
+                                <div @click="filterByPoints('0-200')">0 - 200</div>
+                                <div @click="filterByPoints('201-500')">201 - 500</div>
                                 <div @click="filterByPoints('Trên 500')">Trên 500</div>
                                 </div>
                             </div>
                             <div class="dropdown-container">
-                                <button class="list-box" @click="Dropdown('rank')">
+                                <button class="list-box" @click="Dropdown('membership_type')">
                                     Loại thành viên
                                     <font-awesome-icon :icon="['fas', 'sort-down']" />
                                 </button>
-                                <div v-if="dropdowns.rank" class="dropdown-menu">
-                                <div @click="filterByRank('Vàng')">Vàng</div>
-                                <div @click="filterByRank('Bạc')">Bạc</div>
-                                <div @click="filterByRank('Đồng')">Đồng</div>
+                                <div v-if="dropdowns.membership_type" class="dropdown-menu">
+                                  <div @click="filterBymembership_type('Kim cương')">Kim cương</div> 
+                                  <!-- trên 1000 -->
+                                  <div @click="filterBymembership_type('Vàng')">Vàng</div> 
+                                  <!-- //trên 500 -->
+                                  <div @click="filterBymembership_type('Bạc')">Bạc</div> 
+                                  <!-- // trên 200 -->
+                                  <div @click="filterBymembership_type('Đồng')">Đồng</div>  
                                 </div>
                             </div>
                             <div class="dropdown-container">
-                                <button class="list-box" @click="Dropdown('group')">
+                                <button class="list-box" @click="Dropdown('customer_group')">
                                     Nhóm khách hàng
                                     <font-awesome-icon :icon="['fas', 'sort-down']" />
                                 </button>
-                                <div v-if="dropdowns.group" class="dropdown-menu">
-                                <div @click="filterByGroup('Sinh viên')">Sinh viên</div>
-                                <div @click="filterByGroup('Người mới')">Người mới</div>
-                                <div @click="filterByGroup('Giáo viên')">Giáo viên</div>
-                                <div @click="filterByGroup('Khác')">Khác</div>
+                                <div v-if="dropdowns.customer_group" class="dropdown-menu">
+                                <div @click="filterBycustomer_group('Trẻ em')">Trẻ em</div>
+                                <div @click="filterBycustomer_group('Trẻ vị thành niên')">Trẻ vị thành niên</div>
+                                <div @click="filterBycustomer_group('Học sinh')">Học Sinh</div>
+                                <div @click="filterBycustomer_group('Sinh viên')">Sinh viên </div>
+                                <div @click="filterBycustomer_group('Người lớn')">Người lớn</div>
+                                <div @click="filterBycustomer_group('Khác')">Khác</div>
                                 </div>
                             </div>
                             <button class="list-box" style="border-color:transparent;border-radius: 5px;width: 50%;" @click="resetFilters">Xóa lọc</button>
@@ -139,21 +302,79 @@ function resetFilters() {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(customer, index) in filteredCustomers" :key="customer.id">
-                            <td>{{ index + 1 }}</td>
+                            <tr v-for="(customer, index) in filteredCustomers" :key="customer.customer_id">
+                            <td>{{ customer.customer_id }}</td>
                             <td>{{ customer.name }}</td>
                             <td>{{ customer.phone }}</td>
-                            <td>{{ customer.birthday }}</td>
+                            <td>{{ customer.date_of_birth }}</td>
                             <td>{{ customer.points }}</td>
-                            <td>{{ customer.rank }}</td>
-                            <td>{{ customer.group }}</td>
+                            <td>{{ customer.membership_type }}</td>
+                            <td>{{ customer.customer_group }}</td>
                             <td>
-                                <button class="btn-edit">Sửa</button>
-                                <button class="btn-delete">Xóa</button>
+                                <button class="btn-edit" @click="openEditForm(customer)">Sửa</button>
+                                <button class="btn-delete" @click="deleteCustomer(customer.customer_id)">Xóa</button>
+
                             </td>
                             </tr>
                         </tbody>
+                        
                     </table>
+                    <div v-if="showConfirmModal !== null" class="modal-overlay">
+                      <div class="modal-content">
+                        <h3>Bạn có chắc chắn muốn xóa khách hàng này?</h3>
+                        <button @click="confirmDelete">Có</button>
+                        <button @click="cancelDelete">Không</button>
+                      </div>
+                    </div>
+
+
+                    <!-- form edit -->
+                    <div v-if="showEditCustomerForm" class="add-customer-form">
+                    <h4>Chỉnh sửa thông tin khách hàng</h4>
+                    <form @submit.prevent="editCustomerById">
+                      <div>
+                        <label for="customer_id">Id:</label>
+                        <input v-model="editCustomer.customer_id" type="text" id="customer_id" required />
+                      </div>
+                      <div>
+                        <label for="name">Tên khách hàng:</label>
+                        <input v-model="editCustomer.name" type="text" id="name" required />
+                      </div>
+                      <div>
+                        <label for="phone">Số điện thoại:</label>
+                        <input v-model="editCustomer.phone" type="text" id="phone" required />
+                      </div>
+                      <div>
+                        <label for="date_of_birth">Ngày sinh:</label>
+                        <input v-model="editCustomer.date_of_birth" type="date" id="date_of_birth" required />
+                      </div>
+                      <div>
+                        <label for="points">Điểm tích lũy:</label>
+                        <input v-model="editCustomer.points" type="number" id="points" required />
+                      </div>
+                      <div>
+                        <label for="membership_type">Loại thành viên:</label>
+                        <select v-model="editCustomer.membership_type" required>
+                          <option value="Vàng">Vàng</option>
+                          <option value="Bạc">Bạc</option>
+                          <option value="Đồng">Đồng</option>
+                        </select>
+                        <!-- <input v-model="editCustomer.membership_type" type="text" id="membership_type" required /> -->
+                      </div>
+                      <div>
+                        <label for="customer_group">Nhóm khách hàng:</label>
+                        <select v-model="editCustomer.customer_group" required>
+                          <option value="Sinh viên">Sinh viên</option>
+                          <option value="Người mới">Người mới</option>
+                          <option value="Giáo viên">Giáo viên</option>
+                          <option value="Khác">Khác</option>
+                        </select>
+                        <!-- <input v-model="editCustomer.customer_group" type="text" id="customer_group" required /> -->
+                      </div>
+                      <button type="submit">Lưu</button>
+                      <button type="button" @click="showEditCustomerForm = false">Hủy</button>
+                    </form>
+                  </div>
                 </div>
             </div>
         </div>
@@ -164,7 +385,7 @@ function resetFilters() {
 body{
     width: 100%;
     height:100%;
-    /* font-size: 20px; */
+    font-size: 20px;
     font-family:'Noto Sans', sans-serif;
 }
 
@@ -172,7 +393,7 @@ body{
     position:absolute;
     width: 100%;
     height:100%;
-    /* font-size: 20px; */
+    font-size: 20px;
     top:0;
     left:0;
     margin: 0;
@@ -188,7 +409,6 @@ body{
     flex:1;
     display:flex;
     flex-direction: column;
-    font-size: 20px;
 }
 
 .container{
@@ -206,6 +426,46 @@ body{
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+/* form */
+.add-customer-form {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.add-customer-form input,
+.add-customer-form select {
+  width: 100%;
+  padding: 8px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.add-customer-form button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.add-customer-form button[type="button"] {
+  background-color: #f44336; /* Nút hủy */
+}
+
+.add-customer-form button:hover {
+  background-color: #45a049;
+}
+
+.add-customer-form button[type="button"]:hover {
+  background-color: #e53935;
 }
 
 .white-container{
