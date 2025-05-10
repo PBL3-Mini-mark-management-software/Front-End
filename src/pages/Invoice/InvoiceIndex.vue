@@ -1,3 +1,4 @@
+// tạo đơn hàng giả lập, để truyền phone, points qua cho đăng kí, nếu muốn chỉnh thì chỉnh path, đường chuyển route tới trang
 <script setup>
 import Mainpage from '../../components/Mainpage.vue'
 import Taskbar from '../../components/Taskbar.vue';
