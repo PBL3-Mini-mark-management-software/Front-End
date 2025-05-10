@@ -1,6 +1,7 @@
 <script setup>
 import Mainpage from '../components/Mainpage.vue'
 import Taskbar from '../components/Taskbar.vue';
+// import { customers as customerData } from '../data/customers.js'
 import { ref, computed, onMounted} from 'vue';
 import axios from 'axios';
 
@@ -16,7 +17,7 @@ const dropdowns = ref({
   customer_group: false
 });
 
-const showAddCustomerForm = ref(false);  
+const showAddCustomerForm = ref(false);  // Trạng thái hiển thị form
 const showEditCustomerForm = ref(false);
 const newCustomer = ref({
   customer_id: '',
@@ -28,7 +29,7 @@ const newCustomer = ref({
   customer_group: ''
 });
 const isEditMode = ref(false);
-const editCustomer = ref({}); 
+const editCustomer = ref({}); // ban đầu rỗng
 
 const fetchCustomers = async () => {
   try {
@@ -42,9 +43,9 @@ const fetchCustomers = async () => {
 const addCustomer = async () => {
   try {
     const response = await axios.post('http://localhost:8082/api/customers', newCustomer.value);
-    customers.value.push(response.data); 
+    customers.value.push(response.data);  // Thêm khách hàng vào danh sách hiện tại
     alert('Thêm khách hàng thành công!');
-    showAddCustomerForm.value = false;  
+    showAddCustomerForm.value = false;  // Đóng form sau khi thêm thành công
     resetNewCustomer();  // Xóa form
   } catch (error) {
     console.error('Lỗi khi thêm khách hàng:', error);
@@ -65,7 +66,7 @@ const resetNewCustomer = () => {
 };
 
 const openEditForm = (customer) => {
-  editCustomer.value = { ...customer }; 
+  editCustomer.value = { ...customer }; // sao chép dữ liệu khách hàng vào editCustomer
   isEditMode.value = true;
   showEditCustomerForm.value = true;
 };
@@ -191,10 +192,10 @@ onMounted(() => {
                 <div v-if="showAddCustomerForm" class="add-customer-form">
                   <h4>Thêm khách hàng mới</h4>
                   <form @submit.prevent="addCustomer">
-                    <div>
+                    <!-- <div>
                       <label for="customer_id">Id:</label>
                       <input v-model="newCustomer.customer_id" type="text" id="customer_id" required />
-                    </div>
+                    </div>-->
                     <div>
                       <label for="name">Tên khách hàng:</label>
                       <input v-model="newCustomer.name" type="text" id="name" required />
@@ -334,7 +335,7 @@ onMounted(() => {
                     <form @submit.prevent="editCustomerById">
                       <div>
                         <label for="customer_id">Id:</label>
-                        <input v-model="editCustomer.customer_id" type="text" id="customer_id" required />
+                        <input v-model="editCustomer.customer_id" type="text" id="customer_id" disabled />
                       </div>
                       <div>
                         <label for="name">Tên khách hàng:</label>
@@ -342,7 +343,7 @@ onMounted(() => {
                       </div>
                       <div>
                         <label for="phone">Số điện thoại:</label>
-                        <input v-model="editCustomer.phone" type="text" id="phone" required />
+                        <input v-model="editCustomer.phone" type="text" id="phone" disabled />
                       </div>
                       <div>
                         <label for="date_of_birth">Ngày sinh:</label>
@@ -350,11 +351,12 @@ onMounted(() => {
                       </div>
                       <div>
                         <label for="points">Điểm tích lũy:</label>
-                        <input v-model="editCustomer.points" type="number" id="points" required />
+                        <input v-model="editCustomer.points" type="number" id="points" disabled />
                       </div>
                       <div>
                         <label for="membership_type">Loại thành viên:</label>
-                        <select v-model="editCustomer.membership_type" required>
+                        <select v-model="editCustomer.membership_type" disabled>
+                          <option value="Kim cương">Kim cương</option>
                           <option value="Vàng">Vàng</option>
                           <option value="Bạc">Bạc</option>
                           <option value="Đồng">Đồng</option>
