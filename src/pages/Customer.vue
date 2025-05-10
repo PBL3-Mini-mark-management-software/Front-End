@@ -1,7 +1,6 @@
 <script setup>
 import Mainpage from '../components/Mainpage.vue'
 import Taskbar from '../components/Taskbar.vue';
-// import { customers as customerData } from '../data/customers.js'
 import { ref, computed, onMounted} from 'vue';
 import axios from 'axios';
 
@@ -9,12 +8,10 @@ const customers = ref([]);
 const searchKeyword = ref('');
 const filterPoints = ref('');
 const filtermembership_type = ref('');
-const filtercustomer_group = ref('');
 const showConfirmModal = ref(null); 
 const dropdowns = ref({
   points: false,
-  membership_type: false,
-  customer_group: false
+  membership_type: false
 });
 
 const showAddCustomerForm = ref(false);  // Trạng thái hiển thị form
@@ -25,8 +22,7 @@ const newCustomer = ref({
   phone: '',
   date_of_birth: '',
   points: '',
-  membership_type: '',
-  customer_group: ''
+  membership_type: ''
 });
 const isEditMode = ref(false);
 const editCustomer = ref({}); // ban đầu rỗng
@@ -60,8 +56,7 @@ const resetNewCustomer = () => {
     phone: '',
     date_of_birth: '',
     points: '',
-    membership_type: '',
-    customer_group: ''
+    membership_type: ''
   };
 };
 
@@ -136,10 +131,10 @@ function filterBymembership_type(membership_type) {
   dropdowns.value.membership_type = false;
 }
 
-function filterBycustomer_group(customer_group) {
-  filtercustomer_group.value = customer_group;
-  dropdowns.value.customer_group = false;
-}
+// function filterBycustomer_group(customer_group) {
+//   filtercustomer_group.value = customer_group;
+//   dropdowns.value.customer_group = false;
+// }
 
 function getPointRange(range, points) {
   switch (range) {
@@ -155,16 +150,13 @@ const filteredCustomers = computed(() => {
     const matchName = c.name.toLowerCase().includes(searchKeyword.value.toLowerCase());
     const matchPoints = filterPoints.value ? getPointRange(filterPoints.value, c.points) : true;
     const matchmembership_type = filtermembership_type.value ? c.membership_type === filtermembership_type.value : true;
-    const matchcustomer_group = filtercustomer_group.value ? c.customer_group === filtercustomer_group.value : true;
-
-    return matchName && matchPoints && matchmembership_type && matchcustomer_group;
+    return matchName && matchPoints && matchmembership_type;
   });
 });
 
 function resetFilters() {
   filterPoints.value = '';
   filtermembership_type.value = '';
-  filtercustomer_group.value = '';
   searchKeyword.value = '';
 }
 onMounted(() => {
@@ -192,10 +184,6 @@ onMounted(() => {
                 <div v-if="showAddCustomerForm" class="add-customer-form">
                   <h4>Thêm khách hàng mới</h4>
                   <form @submit.prevent="addCustomer">
-                    <!-- <div>
-                      <label for="customer_id">Id:</label>
-                      <input v-model="newCustomer.customer_id" type="text" id="customer_id" required />
-                    </div>-->
                     <div>
                       <label for="name">Tên khách hàng:</label>
                       <input v-model="newCustomer.name" type="text" id="name" required />
@@ -220,19 +208,6 @@ onMounted(() => {
                         <option value="Bạc">Bạc</option>
                         <option value="Đồng">Đồng</option>
                       </select>
-                      <!-- <input v-model="newCustomer.membership_type" type="text" id="membership_type" required /> -->
-                    </div>
-                    <div>
-                      <label for="customer_group">Nhóm khách hàng:</label>
-                      <select v-model="newCustomer.customer_group" required>
-                        <option value="Trẻ em">Trẻ em</option>
-                        <option value="Trẻ vị thành niên">Trẻ vị thành niên</option>
-                        <option value="Học sinh">Học sinh</option>
-                        <option value="Sinh viên">Sinh viên</option>
-                        <option value="Người lớn">Người lớn</option>
-                        <option value="Khác">Khác</option>
-                      </select>
-                      <!-- <input v-model="newCustomer.customer_group" type="text" id="customer_group" required /> -->
                     </div>
                     <button type="submit">Lưu</button>
                     <button type="button" @click="showAddCustomerForm = false">Hủy</button>
@@ -272,20 +247,6 @@ onMounted(() => {
                                   <div @click="filterBymembership_type('Đồng')">Đồng</div>  
                                 </div>
                             </div>
-                            <div class="dropdown-container">
-                                <button class="list-box" @click="Dropdown('customer_group')">
-                                    Nhóm khách hàng
-                                    <font-awesome-icon :icon="['fas', 'sort-down']" />
-                                </button>
-                                <div v-if="dropdowns.customer_group" class="dropdown-menu">
-                                <div @click="filterBycustomer_group('Trẻ em')">Trẻ em</div>
-                                <div @click="filterBycustomer_group('Trẻ vị thành niên')">Trẻ vị thành niên</div>
-                                <div @click="filterBycustomer_group('Học sinh')">Học Sinh</div>
-                                <div @click="filterBycustomer_group('Sinh viên')">Sinh viên </div>
-                                <div @click="filterBycustomer_group('Người lớn')">Người lớn</div>
-                                <div @click="filterBycustomer_group('Khác')">Khác</div>
-                                </div>
-                            </div>
                             <button class="list-box" style="border-color:transparent;border-radius: 5px;width: 50%;" @click="resetFilters">Xóa lọc</button>
                         </div>
                     </div>
@@ -298,7 +259,6 @@ onMounted(() => {
                             <th>Ngày sinh</th>
                             <th>Điểm tích lũy</th>
                             <th>Loại thành viên</th>
-                            <th>Nhóm KH</th>
                             <th>Thao tác</th>
                             </tr>
                         </thead>
@@ -310,7 +270,6 @@ onMounted(() => {
                             <td>{{ customer.date_of_birth }}</td>
                             <td>{{ customer.points }}</td>
                             <td>{{ customer.membership_type }}</td>
-                            <td>{{ customer.customer_group }}</td>
                             <td>
                                 <button class="btn-edit" @click="openEditForm(customer)">Sửa</button>
                                 <button class="btn-delete" @click="deleteCustomer(customer.customer_id)">Xóa</button>
@@ -361,17 +320,6 @@ onMounted(() => {
                           <option value="Bạc">Bạc</option>
                           <option value="Đồng">Đồng</option>
                         </select>
-                        <!-- <input v-model="editCustomer.membership_type" type="text" id="membership_type" required /> -->
-                      </div>
-                      <div>
-                        <label for="customer_group">Nhóm khách hàng:</label>
-                        <select v-model="editCustomer.customer_group" required>
-                          <option value="Sinh viên">Sinh viên</option>
-                          <option value="Người mới">Người mới</option>
-                          <option value="Giáo viên">Giáo viên</option>
-                          <option value="Khác">Khác</option>
-                        </select>
-                        <!-- <input v-model="editCustomer.customer_group" type="text" id="customer_group" required /> -->
                       </div>
                       <button type="submit">Lưu</button>
                       <button type="button" @click="showEditCustomerForm = false">Hủy</button>
