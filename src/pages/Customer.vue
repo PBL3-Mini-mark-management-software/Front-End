@@ -17,12 +17,12 @@ const dropdowns = ref({
 const showAddCustomerForm = ref(false);  // Trạng thái hiển thị form
 const showEditCustomerForm = ref(false);
 const newCustomer = ref({
-  customer_id: '',
+  // customer_id: '',
   name: '',
   phone: '',
   date_of_birth: '',
-  points: '',
-  membership_type: ''
+  points: 0
+  // membership_type: ''
 });
 const isEditMode = ref(false);
 const editCustomer = ref({}); // ban đầu rỗng
@@ -51,12 +51,12 @@ const addCustomer = async () => {
 
 const resetNewCustomer = () => {
   newCustomer.value = {
-    customer_id: '',
+    // customer_id: '',
     name: '',
     phone: '',
     date_of_birth: '',
-    points: '',
-    membership_type: ''
+    points: 0
+    // membership_type: ''
   };
 };
 
@@ -200,7 +200,7 @@ onMounted(() => {
                       <label for="points">Điểm tích lũy:</label>
                       <input v-model="newCustomer.points" type="number" id="points" required />
                     </div>
-                    <div>
+                    <!-- <div>
                       <label for="membership_type">Loại thành viên:</label>
                       <select v-model="newCustomer.membership_type" required>
                         <option value="Kim cương">Kim cương</option>
@@ -208,7 +208,7 @@ onMounted(() => {
                         <option value="Bạc">Bạc</option>
                         <option value="Đồng">Đồng</option>
                       </select>
-                    </div>
+                    </div> -->
                     <button type="submit">Lưu</button>
                     <button type="button" @click="showAddCustomerForm = false">Hủy</button>
                   </form>
