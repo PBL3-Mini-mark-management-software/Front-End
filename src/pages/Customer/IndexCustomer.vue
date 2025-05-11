@@ -2,10 +2,8 @@
 import Mainpage from '../../components/Mainpage.vue'
 import Taskbar from '../../components/Taskbar.vue';
 import { ref, computed, onMounted} from 'vue';
-import { useRouter } from 'vue-router';
 import axios from 'axios';
 
-const router = useRouter();
 const customers = ref([]);
 const searchKeyword = ref('');
 const filterPoints = ref('');
@@ -17,7 +15,7 @@ const dropdowns = ref({
 });
 const showEditCustomerForm = ref(false);
 const isEditMode = ref(false);
-const editCustomer = ref({}); // ban đầu rỗng
+const editCustomer = ref({}); 
 
 const fetchCustomers = async () => {
   try {
@@ -55,7 +53,7 @@ const deleteCustomer = async (customerId) => {
 };
 
 // Handle delete confirmation
-const confirmDelete = async (customerId) => {
+const confirmDelete = async () => {
   if (showConfirmModal.value !== null) {
     const customerId = showConfirmModal.value;
     try {
@@ -80,7 +78,7 @@ const deleteCustomerById = async (customerId) => {
 };
 // Cancel delete action and close the modal
 const cancelDelete = () => {
-  showConfirmModal.value = null;  // Close modal without deleting
+  showConfirmModal.value = null;  
 };
 
 function Dropdown(type) {
@@ -102,9 +100,12 @@ function filterBymembership_type(membership_type) {
 
 function getPointRange(range, points) {
   switch (range) {
-    case '0-200': return points >= 0 && points <= 200;
-    case '201-500': return points > 200 && points <= 500;
-    case 'Trên 500': return points > 500;
+    case '0-500': return points >= 0 && points <= 500;
+    case '501-1000': return points > 500 && points <= 1000;
+    case '1001-2000': return points > 1000 && points <=2000;
+    case '2001-5000': return points > 2000 && points <=5000;
+    case '5001-10000': return points > 5000 && points <=10000;
+    case 'Trên 10000': return points > 10000;
     default: return true;
   }
 }
@@ -137,6 +138,7 @@ onMounted(() => {
             <Taskbar />
             <div class="container">
                 <div class="white-container">
+                    <div class="overlay" v-if="showEditCustomerForm"></div>
                     <div class="header2">
                         <div class="search-name">
                             <font-awesome-icon class="icon" :icon="['fas', 'magnifying-glass']" />
@@ -149,9 +151,12 @@ onMounted(() => {
                                     <font-awesome-icon :icon="['fas', 'sort-down']" />
                                 </button>
                                 <div v-if="dropdowns.points" class="dropdown-menu">
-                                <div @click="filterByPoints('0-200')">0 - 200</div>
-                                <div @click="filterByPoints('201-500')">201 - 500</div>
-                                <div @click="filterByPoints('Trên 500')">Trên 500</div>
+                                <div @click="filterByPoints('0-500')">0 - 500</div>
+                                <div @click="filterByPoints('501-1000')">501 - 1000</div>
+                                <div @click="filterByPoints('1001-2000')">1001 - 2000</div>
+                                <div @click="filterByPoints('2001-5000')">2001 - 5000</div>
+                                <div @click="filterByPoints('5001-10000')">5001 - 1000</div>
+                                <div @click="filterByPoints('Trên 10000')">Trên 10000</div>
                                 </div>
                             </div>
                             <div class="dropdown-container">
@@ -176,7 +181,7 @@ onMounted(() => {
                     <table class="custom-table">
                         <thead>
                             <tr>
-                            <th>STT</th>
+                            <th>Mã KH</th>
                             <th>Họ tên</th>
                             <th>SĐT</th>
                             <th>Ngày sinh</th>
@@ -212,7 +217,7 @@ onMounted(() => {
 
 
                     <!-- form edit -->
-                    <div v-if="showEditCustomerForm" class="add-customer-form">
+                    <div v-if="showEditCustomerForm" class="edit-customer-form">
                     <h4>Chỉnh sửa thông tin khách hàng</h4>
                     <form @submit.prevent="editCustomerById">
                       <div>
@@ -305,17 +310,35 @@ body{
     align-items: center;
 }
 
-/* form */
-.add-customer-form {
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8); 
+  backdrop-filter: blur(2px);
+  z-index: 999;
 }
 
-.add-customer-form input,
-.add-customer-form select {
+/* form */
+.edit-customer-form {
+  position: fixed;
+  top: 50%;
+  left: 60%;
+  transform: translate(-50%, -50%);
+  background: #f9f9f9;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  z-index: 1000; 
+  width: 50%;
+  box-sizing: border-box;
+}
+
+.edit-customer-form input,
+.edit-customer-form select {
   width: 100%;
   padding: 8px;
   margin: 10px 0;
@@ -323,7 +346,7 @@ body{
   border-radius: 5px;
 }
 
-.add-customer-form button {
+.edit-customer-form button {
   background-color: #4CAF50;
   color: white;
   padding: 10px;
@@ -333,15 +356,15 @@ body{
   margin-top: 10px;
 }
 
-.add-customer-form button[type="button"] {
+.edit-customer-form button[type="button"] {
   background-color: #f44336; /* Nút hủy */
 }
 
-.add-customer-form button:hover {
+.edit-customer-form button:hover {
   background-color: #45a049;
 }
 
-.add-customer-form button[type="button"]:hover {
+.edit-customer-form button[type="button"]:hover {
   background-color: #e53935;
 }
 
@@ -489,5 +512,6 @@ body{
   gap: 20px;
   margin-top: 10px;
 }
+
 
 </style>
